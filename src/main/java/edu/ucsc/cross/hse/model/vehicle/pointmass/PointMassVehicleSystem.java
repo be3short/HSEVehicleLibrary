@@ -45,7 +45,8 @@ public class PointMassVehicleSystem<T> extends Vehicle<T> implements HybridSyste
 	}
 
 	/*
-	 * Determines if the vehicle is in the flow set, which occurs when the vehicle is in motion
+	 * Determines if the vehicle is in the flow set, which occurs when the
+	 * vehicle is in motion
 	 */
 	@Override
 	public boolean flowSet()
@@ -118,6 +119,25 @@ public class PointMassVehicleSystem<T> extends Vehicle<T> implements HybridSyste
 		parameters, controller);
 		return system;
 	}
+
+	// @LibraryDefinition(label = "Randomized Destination Speed Point Mass
+	// Vehicle System")
+	// public static PointMassVehicleSystem<DestinationControl>
+	// getSimplePointMassRandomVehicleSystem()
+	// {
+	// PositionStateData position = new PositionStateData();
+	// SimplePointMassVehicleParameters parameters = new
+	// SimplePointMassVehicleParameters(1.0, 1.0);
+	// RandomizedSimplePointMassVehicleNavigationController controller = new
+	// RandomizedSimplePointMassVehicleNavigationController();
+	// // PositionStateData dat = new PositionStateData(1.0, 1.0, 1.0);
+	// // dat.component().getLabels().setName("Dat");
+	// PointMassVehicleSystem<DestinationControl> systems = new
+	// PointMassVehicleSystem<DestinationControl>(position,
+	// parameters, controller);
+	// // controller.component().configure().addComponent(dat);
+	// return systems;
+	// }
 
 	@SuppressWarnings("unchecked")
 	@Override

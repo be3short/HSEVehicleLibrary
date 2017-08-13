@@ -1,13 +1,11 @@
-package edu.ucsc.cross.hse.models.app;
+package edu.ucsc.cross.hse.model.vehicle.pointmass;
 
 import edu.ucsc.cross.hse.core.framework.annotations.LibraryDefinition;
 import edu.ucsc.cross.hse.model.position.general.PositionData;
 import edu.ucsc.cross.hse.model.position.general.PositionStateData;
 import edu.ucsc.cross.hse.model.vehicle.general.Vehicle;
 import edu.ucsc.cross.hse.model.vehicle.navigation.DestinationControl;
-import edu.ucsc.cross.hse.model.vehicle.pointmass.PointMassVehicleSystem;
-import edu.ucsc.cross.hse.model.vehicle.pointmass.SimplePointMassVehicleParameters;
-import edu.ucsc.cross.hse.model.vehicle.pointmass.SimplePointMassVehicleNavigationController;
+import edu.ucsc.cross.hse.models.app.RandomizedSimplePointMassVehicleNavigationController;
 
 public class TestSystem
 {
@@ -36,11 +34,10 @@ public class TestSystem
 		PositionStateData position = new PositionStateData();
 		SimplePointMassVehicleParameters parameters = new SimplePointMassVehicleParameters(1.0, 1.0);
 		RandomizedSimplePointMassVehicleNavigationController controller = new RandomizedSimplePointMassVehicleNavigationController();
-		PositionStateData dat = new PositionStateData(1.0, 1.0, 1.0);
 		// dat.component().getLabels().setName("Dat");
 		PointMassVehicleSystem<DestinationControl> system = new PointMassVehicleSystem<DestinationControl>(position,
 		parameters, controller);
-		controller.component().configure().addComponent(dat);
+
 		return system;
 	}
 
