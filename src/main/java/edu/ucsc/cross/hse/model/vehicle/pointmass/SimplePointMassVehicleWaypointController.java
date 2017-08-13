@@ -4,10 +4,13 @@ import java.util.ArrayList;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.model.position.euclidean.EuclideanPosition;
-import edu.ucsc.cross.hse.model.position.euclidean.EuclideanPositionState;
+import edu.ucsc.cross.hse.model.position.euclidean.EuclideanPositionData;
+import edu.ucsc.cross.hse.model.position.general.Position;
+import edu.ucsc.cross.hse.model.position.general.PositionState;
+import edu.ucsc.cross.hse.model.vehicle.navigation.WaypointNavigation;
 
-public class SimplePointMassVehicleWaypointController extends Component implements PointMassVehicleControlInput
+public class SimplePointMassVehicleWaypointController extends Component
+implements PointMassVehicleControlInput, WaypointNavigation
 {
 
 	/*
@@ -23,18 +26,18 @@ public class SimplePointMassVehicleWaypointController extends Component implemen
 	/*
 	 * Waypoint that vehicle is currently traveling towards
 	 */
-	public Data<EuclideanPosition> currentWaypoint;
+	public Data<Position> currentWaypoint;
 
 	/*
 	 * List of waypoints that define the path
 	 */
-	public Data<ArrayList<EuclideanPosition>> pathWaypoints;
+	public Data<ArrayList<Position>> pathWaypoints;
 
 	/*
 	 * Constructor with thresholds defined and potentially including waypoints
 	 */
 	public SimplePointMassVehicleWaypointController(Double horiz_prox_threshold, Double vert_prox_threshold,
-	EuclideanPosition... waypoints)
+	Position... waypoints)
 	{
 		super("Simple Point Mass Vehicle Waypoint Controller");
 		instantiateElements(horiz_prox_threshold, vert_prox_threshold, waypoints);
@@ -52,77 +55,87 @@ public class SimplePointMassVehicleWaypointController extends Component implemen
 	/*
 	 * Instantiates state and data elements
 	 */
-	private void instantiateElements(Double horiz_prox_threshold, Double vert_prox_threshold,
-	EuclideanPosition... waypoints)
+	private void instantiateElements(Double horiz_prox_threshold, Double vert_prox_threshold, Position... waypoints)
 	{
 		horizontalProximityThreshold = new Data<Double>("Horizontal Proximity Threshold", horiz_prox_threshold);
 		verticalProximityThreshold = new Data<Double>("Vertical Proximity Threshold", vert_prox_threshold);
-		pathWaypoints = new Data<ArrayList<EuclideanPosition>>("Waypoint Queue", new ArrayList<EuclideanPosition>());
-		currentWaypoint = new Data<EuclideanPosition>("Current Waypoint Index", null);
+		pathWaypoints = new Data<ArrayList<Position>>("Waypoint Queue", new ArrayList<Position>());
+		currentWaypoint = new Data<Position>("Current Waypoint Index", EuclideanPositionData.getNullPosition());
 		addWaypoints(waypoints);
 	}
 
-	@Override
-	public void initialize()
+	public void checkWaypointLoaded()
 	{
-		if (pathWaypoints.getValue().size() > 0)
+		if (currentWaypoint.getValue().isNullPosition())
 		{
-			currentWaypoint.setValue(pathWaypoints.getValue().get(0));
+			if (pathWaypoints.getValue().size() > 0)
+			{
+				currentWaypoint.setValue(pathWaypoints.getValue().get(0));
+			}
 		}
 	}
 
 	/*
 	 * Add waypoints to the path
 	 */
-	public void addWaypoints(EuclideanPosition... waypoints)
+	@Override
+	public void addWaypoints(Position... waypoints)
 	{
-		for (EuclideanPosition waypoint : waypoints)
+		for (Position waypoint : waypoints)
 		{
 			pathWaypoints.getValue().add(waypoint);
 		}
 	}
 
+	/*
+	 * Clear waypoints
+	 */
 	@Override
-	public Double getOrientationInput(EuclideanPositionState vehicle_location_state)
+	public void clearWaypoints()
+	{
+		pathWaypoints.getValue().clear();
+		currentWaypoint.setValue(EuclideanPositionData.getNullPosition());
+	}
+
+	@Override
+	public Double getOrientationInput(PositionState vehicle_location_state)
 	{
 		updateWaypoint(vehicle_location_state);
 		return computeTargetAngle(vehicle_location_state);
 	}
 
 	@Override
-	public Double getPlanarVelocityInput(EuclideanPositionState vehicle_location_state)
+	public Double getPlanarVelocityInput(PositionState vehicle_location_state)
 	{
 		updateWaypoint(vehicle_location_state);
 		return computePlanarVelocityInput(vehicle_location_state);
 	}
 
 	@Override
-	public Double getVerticalVelocityInput(EuclideanPositionState vehicle_location_state)
+	public Double getVerticalVelocityInput(PositionState vehicle_location_state)
 	{
 		updateWaypoint(vehicle_location_state);
 		return computeVerticalVelocityInput(vehicle_location_state);
 	}
 
-	public void updateWaypoint(EuclideanPositionState vehicle_location_state)
+	public void updateWaypoint(PositionState vehicle_location_state)
 	{
+		checkWaypointLoaded();
 		if (currentWaypoint.getValue() != null)
 		{
 			if (currentWaypointReached(vehicle_location_state))
 			{
-				System.out.println("Waypoint Reached");
 				Integer waypointIndex = pathWaypoints.getValue().indexOf(currentWaypoint.getValue());
 				if (waypointIndex >= 0 && (waypointIndex < pathWaypoints.getValue().size() - 1))
 				{
+					System.out.println("Waypoint Reached");
 					currentWaypoint.setValue(pathWaypoints.getValue().get(++waypointIndex));
-				} else
-				{
-					currentWaypoint.setValue(null);
 				}
 			}
 		}
 	}
 
-	public Double computeVerticalVelocityInput(EuclideanPositionState vehicle_location_state)
+	public Double computeVerticalVelocityInput(PositionState vehicle_location_state)
 	{
 		Double velocity = 0.0;
 		if (currentWaypoint.getValue() != null)
@@ -136,7 +149,7 @@ public class SimplePointMassVehicleWaypointController extends Component implemen
 		return velocity;
 	}
 
-	public Double computePlanarVelocityInput(EuclideanPositionState vehicle_location_state)
+	public Double computePlanarVelocityInput(PositionState vehicle_location_state)
 	{
 		Double velocity = 0.0;
 		if (currentWaypoint.getValue() != null)
@@ -149,7 +162,7 @@ public class SimplePointMassVehicleWaypointController extends Component implemen
 		return velocity;
 	}
 
-	public boolean withinVerticalProximity(EuclideanPositionState vehicle_location_state)
+	public boolean withinVerticalProximity(PositionState vehicle_location_state)
 	{
 		Double verticalDistance = currentWaypoint.getValue().getZPosition()
 		- vehicle_location_state.getZPositionState().getValue();
@@ -157,7 +170,7 @@ public class SimplePointMassVehicleWaypointController extends Component implemen
 		return withinVerticalProximity;
 	}
 
-	public boolean withinHorizontalProximity(EuclideanPositionState vehicle_location_state)
+	public boolean withinHorizontalProximity(PositionState vehicle_location_state)
 	{
 		Double horizontalDistance = Math.sqrt(
 		Math.pow((currentWaypoint.getValue().getXPosition() - vehicle_location_state.getXPositionState().getValue()), 2)
@@ -167,14 +180,14 @@ public class SimplePointMassVehicleWaypointController extends Component implemen
 		return withinVerticalProximity;
 	}
 
-	public boolean currentWaypointReached(EuclideanPositionState vehicle_location_state)
+	public boolean currentWaypointReached(PositionState vehicle_location_state)
 	{
 		boolean reached = withinVerticalProximity(vehicle_location_state)
 		&& withinHorizontalProximity(vehicle_location_state);
 		return reached;
 	}
 
-	public Double computeTargetAngle(EuclideanPositionState vehicle_location_state)
+	public Double computeTargetAngle(PositionState vehicle_location_state)
 	{
 		Double angle = 0.0;
 		if (currentWaypoint.getValue() != null)

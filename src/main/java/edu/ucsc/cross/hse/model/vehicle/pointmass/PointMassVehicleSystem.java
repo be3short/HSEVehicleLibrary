@@ -1,15 +1,12 @@
 package edu.ucsc.cross.hse.model.vehicle.pointmass;
 
-import edu.ucsc.cross.hse.core.framework.annotations.LibraryDefinition;
-import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
-import edu.ucsc.cross.hse.model.position.euclidean.EuclideanPositionState;
-import edu.ucsc.cross.hse.model.position.euclidean.EuclideanPositionStateData;
+import edu.ucsc.cross.hse.model.position.general.PositionState;
+import edu.ucsc.cross.hse.model.vehicle.general.Vehicle;
 
-public class PointMassVehicleSystem extends Component implements HybridSystem
+public class PointMassVehicleSystem extends Vehicle implements HybridSystem
 {
 
-	public EuclideanPositionState state; // vehicle state
 	public PointMassVehicleParameters parameters; // vehicle parameters
 	public PointMassVehicleControlInput input; // vehicle controller
 
@@ -22,10 +19,11 @@ public class PointMassVehicleSystem extends Component implements HybridSystem
 	 * 
 	 * @param controller - point mass vehicle control input
 	 */
-	public PointMassVehicleSystem(EuclideanPositionState state, PointMassVehicleParameters parameters,
+	public PointMassVehicleSystem(PositionState state, PointMassVehicleParameters parameters,
 	PointMassVehicleControlInput controller)
 	{
-		this.state = state;
+		super(state);
+		// this.state = state;
 		this.parameters = parameters;
 		this.input = controller;
 	}
@@ -103,14 +101,15 @@ public class PointMassVehicleSystem extends Component implements HybridSystem
 		Double zVelocity = input.getVerticalVelocityInput(state);
 		return zVelocity;
 	}
+	//
+	// @LibraryDefinition(label = "Simple Point Mass Vehicle System With Empty Path")
+	// public static PointMassVehicleSystem getSimplePointMassVehicleSystem()
+	// {
+	// EuclideanPositionStateData position = new EuclideanPositionStateData();
+	// SimplePointMassVehicleParameters parameters = new SimplePointMassVehicleParameters(1.0, 1.0);
+	// SimplePointMassVehicleWaypointController controller = new SimplePointMassVehicleWaypointController(.1, .1);
+	// PointMassVehicleSystem system = new PointMassVehicleSystem(position, parameters, controller);
+	// return system;
+	// }
 
-	@LibraryDefinition(label = "Simple Point Mass Vehicle System With Empty Path")
-	public static PointMassVehicleSystem getSimplePointMassVehicleSystem()
-	{
-		EuclideanPositionStateData position = new EuclideanPositionStateData();
-		SimplePointMassVehicleParameters parameters = new SimplePointMassVehicleParameters(1.0, 1.0);
-		SimplePointMassVehicleWaypointController controller = new SimplePointMassVehicleWaypointController(.1, .1);
-		PointMassVehicleSystem system = new PointMassVehicleSystem(position, parameters, controller);
-		return system;
-	}
 }
