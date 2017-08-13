@@ -32,7 +32,7 @@ compile 'com.github.be3short:HybridSystemsEnvironment:v1.0.0'
 compile 'com.github.be3short:HSEPositionLibrary:-SNAPSHOT'
 //compile 'com.github.be3short:HybridSystemsEnvironment:v1.0.0'
 //compile 'com.github.be3short:HSEStockMarketAnalysisLibrary:-SNAPSHOT'
-testCompile 'com.github.be3short:HybridSystemsEnvironmentApplication:-SNAPSHOT'
+//testCompile 'com.github.be3short:HybridSystemsEnvironmentApplication:-SNAPSHOT'
 
 
 }

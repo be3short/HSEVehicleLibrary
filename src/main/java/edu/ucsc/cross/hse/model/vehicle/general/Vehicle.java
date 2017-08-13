@@ -12,6 +12,7 @@ public abstract class Vehicle<T> extends Component implements Position, ControlT
 
 	public Vehicle(PositionState state)
 	{
+		super("Vehicle", "Vehicle");
 		this.state = state;
 	}
 

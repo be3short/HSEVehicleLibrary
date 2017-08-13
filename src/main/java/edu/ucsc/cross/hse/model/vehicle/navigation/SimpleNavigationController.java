@@ -44,7 +44,7 @@ public class SimpleNavigationController extends WaypointConroller implements Des
 		PositionData approachPosition = new PositionData(position.getXPosition(), position.getYPosition(),
 		travelHeight.getValue());
 		PositionData destinationPosition = new PositionData(position.getXPosition(), position.getYPosition(),
-		position.getZPosition() + travelHeight.getValue());
+		position.getZPosition());
 		super.addWaypoints(approachPosition, destinationPosition);
 	}
 

@@ -79,6 +79,7 @@ public abstract class WaypointConroller extends Component
 	 */
 	public void clearWaypoints()
 	{
+		destinationReached.setValue(false);
 		pathWaypoints.getValue().clear();
 		currentWaypoint.setValue(PositionData.getNullPosition());
 	}
@@ -121,8 +122,9 @@ public abstract class WaypointConroller extends Component
 				{
 					System.out.println("Waypoint Reached");
 					currentWaypoint.setValue(pathWaypoints.getValue().get(++waypointIndex));
-					destinationReached(vehicle_location_state);
+
 				}
+				destinationReached(vehicle_location_state);
 			}
 		}
 	}

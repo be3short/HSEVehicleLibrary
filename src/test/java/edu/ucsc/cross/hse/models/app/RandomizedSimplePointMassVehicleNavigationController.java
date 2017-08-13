@@ -16,10 +16,16 @@ implements HybridSystem
 
 	public RandomizedSimplePointMassVehicleNavigationController()
 	{
-		super(.1, .1, 100.0);
-		xPosRange = new Data<Double>("X Position Generation Range", 10.0);
-		yPosRange = new Data<Double>("Y Position Generation Range", 10.0);
-		zPosRange = new Data<Double>("Z Position Generation Range", 10.0);
+		super(100.0, .1, .1);
+		xPosRange = new Data<Double>("X Position Generation Range", 100.0);
+		yPosRange = new Data<Double>("Y Position Generation Range", 100.0);
+		zPosRange = new Data<Double>("Z Position Generation Range", 100.0);
+	}
+
+	@Override
+	public void initialize()
+	{
+		super.updateDestination(generateNewDestination());
 	}
 
 	@Override

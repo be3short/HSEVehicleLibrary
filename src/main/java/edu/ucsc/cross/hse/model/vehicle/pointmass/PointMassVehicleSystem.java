@@ -26,6 +26,7 @@ public class PointMassVehicleSystem<T> extends Vehicle<T> implements HybridSyste
 	PointMassVehicleControlInput controller)
 	{
 		super(state);
+		super.component().getLabels().setName("Point Mass Vehicle System");
 		T controlType = (T) controller; // check for correct controller
 		// this.state = state;
 		this.parameters = parameters;
