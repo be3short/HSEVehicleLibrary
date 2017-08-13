@@ -1,10 +1,13 @@
 package edu.ucsc.cross.hse.model.vehicle.pointmass;
 
+import edu.ucsc.cross.hse.core.framework.annotations.LibraryDefinition;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.model.position.general.PositionState;
+import edu.ucsc.cross.hse.model.position.general.PositionStateData;
 import edu.ucsc.cross.hse.model.vehicle.general.Vehicle;
+import edu.ucsc.cross.hse.model.vehicle.navigation.DestinationControl;
 
-public class PointMassVehicleSystem extends Vehicle implements HybridSystem
+public class PointMassVehicleSystem<T> extends Vehicle<T> implements HybridSystem
 {
 
 	public PointMassVehicleParameters parameters; // vehicle parameters
@@ -23,6 +26,7 @@ public class PointMassVehicleSystem extends Vehicle implements HybridSystem
 	PointMassVehicleControlInput controller)
 	{
 		super(state);
+		T controlType = (T) controller; // check for correct controller
 		// this.state = state;
 		this.parameters = parameters;
 		this.input = controller;
@@ -101,15 +105,24 @@ public class PointMassVehicleSystem extends Vehicle implements HybridSystem
 		Double zVelocity = input.getVerticalVelocityInput(state);
 		return zVelocity;
 	}
-	//
-	// @LibraryDefinition(label = "Simple Point Mass Vehicle System With Empty Path")
-	// public static PointMassVehicleSystem getSimplePointMassVehicleSystem()
-	// {
-	// EuclideanPositionStateData position = new EuclideanPositionStateData();
-	// SimplePointMassVehicleParameters parameters = new SimplePointMassVehicleParameters(1.0, 1.0);
-	// SimplePointMassVehicleWaypointController controller = new SimplePointMassVehicleWaypointController(.1, .1);
-	// PointMassVehicleSystem system = new PointMassVehicleSystem(position, parameters, controller);
-	// return system;
-	// }
+
+	@LibraryDefinition(label = "Simple Point Mass Vehicle System With Empty Path")
+	public static PointMassVehicleSystem<DestinationControl> getSimplePointMassVehicleSystem()
+	{
+		PositionStateData position = new PositionStateData();
+		SimplePointMassVehicleParameters parameters = new SimplePointMassVehicleParameters(1.0, 1.0);
+		SimplePointMassVehicleNavigationController controller = new SimplePointMassVehicleNavigationController(.1, .1,
+		200.0);
+		PointMassVehicleSystem<DestinationControl> system = new PointMassVehicleSystem<DestinationControl>(position,
+		parameters, controller);
+		return system;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public T getVehicleController()
+	{
+		return (T) input;
+	}
 
 }

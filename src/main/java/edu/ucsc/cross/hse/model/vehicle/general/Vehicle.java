@@ -5,7 +5,7 @@ import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.model.position.general.Position;
 import edu.ucsc.cross.hse.model.position.general.PositionState;
 
-public abstract class Vehicle extends Component implements Position
+public abstract class Vehicle<T> extends Component implements Position, ControlType<T>
 {
 
 	public PositionState state;

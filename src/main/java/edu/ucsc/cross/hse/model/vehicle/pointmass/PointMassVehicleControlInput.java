@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.model.vehicle.pointmass;
 
+import edu.ucsc.cross.hse.model.position.general.Position;
 import edu.ucsc.cross.hse.model.position.general.PositionState;
 
 public interface PointMassVehicleControlInput

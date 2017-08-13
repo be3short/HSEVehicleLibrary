@@ -29,8 +29,8 @@ dependencies {
    
  //testCompile 'junit:junit:4.12'
 compile 'com.github.be3short:HybridSystemsEnvironment:v1.0.0'
-compile 'com.github.be3short:HSEPositionLibrary:v1.0.0'
-compile 'com.github.be3short:HybridSystemsEnvironment:v1.0.0'
+compile 'com.github.be3short:HSEPositionLibrary:-SNAPSHOT'
+//compile 'com.github.be3short:HybridSystemsEnvironment:v1.0.0'
 //compile 'com.github.be3short:HSEStockMarketAnalysisLibrary:-SNAPSHOT'
 testCompile 'com.github.be3short:HybridSystemsEnvironmentApplication:-SNAPSHOT'
 

@@ -1,18 +1,17 @@
-package edu.ucsc.cross.hse.model.vehicle.pointmass;
+package edu.ucsc.cross.hse.model.vehicle.navigation;
 
 import java.util.ArrayList;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.model.position.euclidean.EuclideanPositionData;
 import edu.ucsc.cross.hse.model.position.general.Position;
+import edu.ucsc.cross.hse.model.position.general.PositionData;
 import edu.ucsc.cross.hse.model.position.general.PositionState;
-import edu.ucsc.cross.hse.model.vehicle.navigation.WaypointNavigation;
 
-public class SimplePointMassVehicleWaypointController extends Component
-implements PointMassVehicleControlInput, WaypointNavigation
+public abstract class WaypointConroller extends Component
 {
 
+	public Data<Boolean> destinationReached;
 	/*
 	 * Horizontal distance from exact waypoint to consider vehicle arrived.
 	 */
@@ -36,19 +35,18 @@ implements PointMassVehicleControlInput, WaypointNavigation
 	/*
 	 * Constructor with thresholds defined and potentially including waypoints
 	 */
-	public SimplePointMassVehicleWaypointController(Double horiz_prox_threshold, Double vert_prox_threshold,
-	Position... waypoints)
+	public WaypointConroller(Double horiz_prox_threshold, Double vert_prox_threshold, Position... waypoints)
 	{
-		super("Simple Point Mass Vehicle Waypoint Controller");
+		super("Waypoint Controller");
 		instantiateElements(horiz_prox_threshold, vert_prox_threshold, waypoints);
 	}
 
 	/*
 	 * Constructor without thresholds or waypoints defined
 	 */
-	public SimplePointMassVehicleWaypointController()
+	public WaypointConroller()
 	{
-		super("Simple Point Mass Vehicle Waypoint Controller");
+		super("Waypoint Controller");
 		instantiateElements(0.0, 0.0);
 	}
 
@@ -57,28 +55,17 @@ implements PointMassVehicleControlInput, WaypointNavigation
 	 */
 	private void instantiateElements(Double horiz_prox_threshold, Double vert_prox_threshold, Position... waypoints)
 	{
+		destinationReached = new Data<Boolean>("Destination Reached", false);
 		horizontalProximityThreshold = new Data<Double>("Horizontal Proximity Threshold", horiz_prox_threshold);
 		verticalProximityThreshold = new Data<Double>("Vertical Proximity Threshold", vert_prox_threshold);
 		pathWaypoints = new Data<ArrayList<Position>>("Waypoint Queue", new ArrayList<Position>());
-		currentWaypoint = new Data<Position>("Current Waypoint Index", EuclideanPositionData.getNullPosition());
+		currentWaypoint = new Data<Position>("Current Waypoint Index", PositionData.getNullPosition());
 		addWaypoints(waypoints);
-	}
-
-	public void checkWaypointLoaded()
-	{
-		if (currentWaypoint.getValue().isNullPosition())
-		{
-			if (pathWaypoints.getValue().size() > 0)
-			{
-				currentWaypoint.setValue(pathWaypoints.getValue().get(0));
-			}
-		}
 	}
 
 	/*
 	 * Add waypoints to the path
 	 */
-	@Override
 	public void addWaypoints(Position... waypoints)
 	{
 		for (Position waypoint : waypoints)
@@ -90,32 +77,36 @@ implements PointMassVehicleControlInput, WaypointNavigation
 	/*
 	 * Clear waypoints
 	 */
-	@Override
 	public void clearWaypoints()
 	{
 		pathWaypoints.getValue().clear();
-		currentWaypoint.setValue(EuclideanPositionData.getNullPosition());
+		currentWaypoint.setValue(PositionData.getNullPosition());
 	}
 
-	@Override
-	public Double getOrientationInput(PositionState vehicle_location_state)
+	public boolean destinationReached(PositionState vehicle_location_state)
 	{
-		updateWaypoint(vehicle_location_state);
-		return computeTargetAngle(vehicle_location_state);
+		boolean destinationReached = false;
+		if (pathWaypoints.getValue().size() > 0)
+		{
+			if (currentWaypoint.getValue().equals(pathWaypoints.getValue().get(pathWaypoints.getValue().size() - 1)))
+			{
+				destinationReached = currentWaypointReached(vehicle_location_state);
+
+			}
+		}
+		this.destinationReached.setValue(destinationReached);
+		return destinationReached;
 	}
 
-	@Override
-	public Double getPlanarVelocityInput(PositionState vehicle_location_state)
+	public void checkWaypointLoaded()
 	{
-		updateWaypoint(vehicle_location_state);
-		return computePlanarVelocityInput(vehicle_location_state);
-	}
-
-	@Override
-	public Double getVerticalVelocityInput(PositionState vehicle_location_state)
-	{
-		updateWaypoint(vehicle_location_state);
-		return computeVerticalVelocityInput(vehicle_location_state);
+		if (currentWaypoint.getValue().isNullPosition())
+		{
+			if (pathWaypoints.getValue().size() > 0)
+			{
+				currentWaypoint.setValue(pathWaypoints.getValue().get(0));
+			}
+		}
 	}
 
 	public void updateWaypoint(PositionState vehicle_location_state)
@@ -130,6 +121,7 @@ implements PointMassVehicleControlInput, WaypointNavigation
 				{
 					System.out.println("Waypoint Reached");
 					currentWaypoint.setValue(pathWaypoints.getValue().get(++waypointIndex));
+					destinationReached(vehicle_location_state);
 				}
 			}
 		}
@@ -187,15 +179,4 @@ implements PointMassVehicleControlInput, WaypointNavigation
 		return reached;
 	}
 
-	public Double computeTargetAngle(PositionState vehicle_location_state)
-	{
-		Double angle = 0.0;
-		if (currentWaypoint.getValue() != null)
-		{
-			angle = Math
-			.atan2(currentWaypoint.getValue().getYPosition() - vehicle_location_state.getYPositionState().getValue(),
-			currentWaypoint.getValue().getXPosition() - vehicle_location_state.getXPositionState().getValue());
-		}
-		return angle;
-	}
 }

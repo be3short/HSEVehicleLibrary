@@ -1,28 +1,43 @@
 package edu.ucsc.cross.hse.models.app;
 
 import edu.ucsc.cross.hse.core.framework.annotations.LibraryDefinition;
-import edu.ucsc.cross.hse.model.position.euclidean.EuclideanPositionData;
-import edu.ucsc.cross.hse.model.position.euclidean.EuclideanPositionStateData;
+import edu.ucsc.cross.hse.model.position.general.PositionData;
+import edu.ucsc.cross.hse.model.position.general.PositionStateData;
+import edu.ucsc.cross.hse.model.vehicle.navigation.DestinationControl;
 import edu.ucsc.cross.hse.model.vehicle.pointmass.PointMassVehicleSystem;
 import edu.ucsc.cross.hse.model.vehicle.pointmass.SimplePointMassVehicleParameters;
-import edu.ucsc.cross.hse.model.vehicle.pointmass.SimplePointMassVehicleWaypointController;
+import edu.ucsc.cross.hse.model.vehicle.pointmass.SimplePointMassVehicleNavigationController;
 
 public class TestSystem
 {
 
 	@LibraryDefinition(label = "Square Path Unitary Speed Point Mass Vehicle System")
-	public static PointMassVehicleSystem getSimplePointMassVehicleSystem()
+	public static PointMassVehicleSystem<DestinationControl> getSimplePointMassVehicleSystem()
 	{
-		EuclideanPositionStateData position = new EuclideanPositionStateData();
+		PositionStateData position = new PositionStateData();
 		SimplePointMassVehicleParameters parameters = new SimplePointMassVehicleParameters(1.0, 1.0);
-		EuclideanPositionData[] waypoints = new EuclideanPositionData[]
-		{ new EuclideanPositionData(0.0, 0.0, 10.0), new EuclideanPositionData(10.0, 10.0, 10.0),
-				new EuclideanPositionData(10.0, -10.0, 10.0), new EuclideanPositionData(-10.0, -10.0, 10.0),
-				new EuclideanPositionData(-10.0, 10.0, 10.0), new EuclideanPositionData(0.0, 0.0, 10.0),
-				new EuclideanPositionData(0.0, 0.0, 0.0) };
-		SimplePointMassVehicleWaypointController controller = new SimplePointMassVehicleWaypointController(.1, .1,
-		waypoints);
-		PointMassVehicleSystem system = new PointMassVehicleSystem(position, parameters, controller);
+		PositionData[] waypoints = new PositionData[]
+		{ new PositionData(0.0, 0.0, 10.0), new PositionData(10.0, 10.0, 10.0), new PositionData(10.0, -10.0, 10.0),
+				new PositionData(-10.0, -10.0, 10.0), new PositionData(-10.0, 10.0, 10.0),
+				new PositionData(0.0, 0.0, 10.0), new PositionData(0.0, 0.0, 0.0) };
+		SimplePointMassVehicleNavigationController controller = new SimplePointMassVehicleNavigationController(.1, .1,
+		100.0);
+		controller.addWaypoints(waypoints);
+
+		PointMassVehicleSystem<DestinationControl> system = new PointMassVehicleSystem<DestinationControl>(position,
+		parameters, controller);
+		return system;
+	}
+
+	@LibraryDefinition(label = "Randomized Destination Speed Point Mass Vehicle System")
+	public static PointMassVehicleSystem<DestinationControl> getSimplePointMassRandomVehicleSystem()
+	{
+		PositionStateData position = new PositionStateData();
+		SimplePointMassVehicleParameters parameters = new SimplePointMassVehicleParameters(1.0, 1.0);
+		RandomizedSimplePointMassVehicleNavigationController controller = new RandomizedSimplePointMassVehicleNavigationController();
+
+		PointMassVehicleSystem<DestinationControl> system = new PointMassVehicleSystem<DestinationControl>(position,
+		parameters, controller);
 		return system;
 	}
 }
