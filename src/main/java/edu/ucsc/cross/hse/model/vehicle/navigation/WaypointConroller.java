@@ -1,12 +1,11 @@
 package edu.ucsc.cross.hse.model.vehicle.navigation;
 
-import java.util.ArrayList;
-
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.model.position.general.Position;
 import edu.ucsc.cross.hse.model.position.general.PositionData;
 import edu.ucsc.cross.hse.model.position.general.PositionState;
+import java.util.ArrayList;
 
 public abstract class WaypointConroller extends Component
 {
