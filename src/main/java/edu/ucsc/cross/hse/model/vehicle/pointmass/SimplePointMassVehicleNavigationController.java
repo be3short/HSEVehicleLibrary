@@ -92,4 +92,11 @@ implements PointMassVehicleControlInput
 		return angle;
 	}
 
+	@Override
+	public boolean inMotion()
+	{
+		// TODO Auto-generated method stub
+		return super.pathWaypoints.setValue().size() > 0;
+	}
+
 }

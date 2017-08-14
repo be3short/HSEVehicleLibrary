@@ -6,6 +6,8 @@ import edu.ucsc.cross.hse.model.position.general.PositionState;
 public interface PointMassVehicleControlInput
 {
 
+	public boolean inMotion();
+
 	/*
 	 * Orientation angle (in radians) input to the point mass vehicle
 	 */

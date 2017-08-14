@@ -100,11 +100,14 @@ public abstract class WaypointConroller extends Component
 
 	public void checkWaypointLoaded()
 	{
-		if (currentWaypoint.getValue().isNullPosition())
+		if (currentWaypoint.getValue() != null)
 		{
-			if (pathWaypoints.getValue().size() > 0)
+			if (currentWaypoint.getValue().isNullPosition())
 			{
-				currentWaypoint.setValue(pathWaypoints.getValue().get(0));
+				if (pathWaypoints.getValue().size() > 0)
+				{
+					currentWaypoint.setValue(pathWaypoints.getValue().get(0));
+				}
 			}
 		}
 	}
@@ -175,8 +178,12 @@ public abstract class WaypointConroller extends Component
 
 	public boolean currentWaypointReached(PositionState vehicle_location_state)
 	{
-		boolean reached = withinVerticalProximity(vehicle_location_state)
-		&& withinHorizontalProximity(vehicle_location_state);
+		boolean reached = true;
+		if (currentWaypoint.getValue() != null)
+		{
+			reached = withinVerticalProximity(vehicle_location_state)
+			&& withinHorizontalProximity(vehicle_location_state);
+		}
 		return reached;
 	}
 

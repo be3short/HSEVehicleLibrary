@@ -45,13 +45,13 @@ public class PointMassVehicleSystem<T> extends Vehicle<T> implements HybridSyste
 	}
 
 	/*
-	 * Determines if the vehicle is in the flow set, which occurs when the
-	 * vehicle is in motion
+	 * Determines if the vehicle is in the flow set, which occurs when the vehicle is in motion
 	 */
 	@Override
 	public boolean flowSet()
 	{
-		boolean inMotion = (Math.abs(input.getVerticalVelocityInput(state)) + input.getPlanarVelocityInput(state)) > 0;
+		boolean inMotion = input.inMotion();// (Math.abs(input.getVerticalVelocityInput(state)) +
+											// input.getPlanarVelocityInput(state)) > 0;
 		return inMotion;
 	}
 
