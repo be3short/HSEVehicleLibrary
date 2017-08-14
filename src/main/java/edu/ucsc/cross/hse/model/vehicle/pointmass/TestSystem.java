@@ -5,7 +5,6 @@ import edu.ucsc.cross.hse.model.position.general.PositionData;
 import edu.ucsc.cross.hse.model.position.general.PositionStateData;
 import edu.ucsc.cross.hse.model.vehicle.general.Vehicle;
 import edu.ucsc.cross.hse.model.vehicle.navigation.DestinationControl;
-import edu.ucsc.cross.hse.models.app.RandomizedSimplePointMassVehicleNavigationController;
 
 public class TestSystem
 {

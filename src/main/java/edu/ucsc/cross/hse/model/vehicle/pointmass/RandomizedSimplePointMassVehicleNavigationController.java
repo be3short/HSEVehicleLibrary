@@ -1,10 +1,9 @@
-package edu.ucsc.cross.hse.models.app;
+package edu.ucsc.cross.hse.model.vehicle.pointmass;
 
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.model.position.general.PositionData;
 import edu.ucsc.cross.hse.model.vehicle.navigation.SimpleNavigationController;
-import edu.ucsc.cross.hse.model.vehicle.pointmass.SimplePointMassVehicleNavigationController;
 
 public class RandomizedSimplePointMassVehicleNavigationController extends SimplePointMassVehicleNavigationController
 implements HybridSystem
